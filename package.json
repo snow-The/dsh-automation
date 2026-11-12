@@ -1,0 +1,33 @@
+{
+  "name": "@snow-the/dsh-automation",
+  "version": "0.1.0",
+  "description": "Host-side scheduled checks and collection that need no agent: rss / http-json / http-status / shell / disk adapters, fixed examples in ~/.dsh/automation/jobs.json, run history and status tools.",
+  "type": "module",
+  "main": "./index.js",
+  "files": [
+    "index.js",
+    "cordis.patch.yml",
+    "README.md",
+    "jobs.example.json"
+  ],
+  "license": "MIT",
+  "keywords": [
+    "dsh",
+    "dsh-plugin",
+    "automation",
+    "cron",
+    "rss",
+    "deepseek-harness"
+  ],
+  "dsh": {
+    "bundle": {
+      "patch": "./cordis.patch.yml"
+    }
+  },
+  "peerDependencies": {
+    "@deepseek-ai/dsh-tools": ">=0.2.1-rc.5"
+  },
+  "scripts": {
+    "test": "node --test test/"
+  }
+}

@@ -1,0 +1,5 @@
+# dsh-automation bundle layer: 不需要 agent 的定時檢查與收集（host 側，零依賴）。
+# row 必須寫在 `- insert:` 裡（裸 `- id:` 會被當成既有 entry 的 patch，載入失敗）。
+- insert:
+    - id: automation
+      name: '@snow-the/dsh-automation'

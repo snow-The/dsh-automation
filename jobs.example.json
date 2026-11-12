@@ -1,0 +1,44 @@
+{
+  "version": 1,
+  "jobs": [
+    {
+      "id": "hn-top",
+      "type": "rss",
+      "url": "https://hnrss.org/frontpage",
+      "every": "15m",
+      "keep": 10,
+      "note": "Hacker News 首頁；RSSHub 風格：換 url 就換來源"
+    },
+    {
+      "id": "dsh-releases",
+      "type": "rss",
+      "url": "https://github.com/deepseek-ai/deepseek-harness/releases.atom",
+      "every": "1h",
+      "keep": 10,
+      "note": "上游 release 通知"
+    },
+    {
+      "id": "local-web",
+      "type": "http-status",
+      "url": "http://127.0.0.1:3080/",
+      "every": "5m",
+      "note": "本機 DSH host 還活著嗎（只看 HTTP 狀態與延遲）"
+    },
+    {
+      "id": "disk-home",
+      "type": "disk",
+      "path": "~",
+      "every": "30m",
+      "warnGB": 20,
+      "note": "家目錄剩餘空間；低於 warnGB 會標記"
+    },
+    {
+      "id": "echo-check",
+      "type": "shell",
+      "command": "cmd /c echo automation-ok",
+      "every": "10m",
+      "timeoutMs": 10000,
+      "note": "shell adapter 範例：只記錄 exit code 與輸出尾巴"
+    }
+  ]
+}
