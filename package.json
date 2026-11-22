@@ -1,6 +1,10 @@
 {
   "name": "@snow-the/dsh-automation",
   "version": "0.1.0",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/snow-The/dsh-automation.git"
+  },
   "description": "Host-side scheduled checks and collection that need no agent: rss / http-json / http-status / shell / disk adapters, fixed examples in ~/.dsh/automation/jobs.json, run history and status tools.",
   "type": "module",
   "main": "./index.js",
