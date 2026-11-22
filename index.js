@@ -203,13 +203,45 @@ const ADAPTERS = {
   },
 }
 
+/**
+ * Retry a network adapter once on a transport failure.
+ *
+ * WHY. Measured 2026-11-22: `hn-top` (hnrss.org) failed with `fetch failed`
+ * after 10,467 ms, while the same fetch run by hand succeeded 5/5 — the first
+ * attempt took 9,223 ms and the next four took 233-412 ms. The job runs every
+ * 15 minutes, so every run is a COLD connection, and a cold TLS handshake to
+ * that host occasionally exceeds the budget.
+ *
+ * A single cold-connection failure is not evidence that the source is down, so
+ * recording it as FAIL makes the automation layer cry wolf. One retry costs
+ * nothing when the first attempt succeeded, and turns a flaky cold start into
+ * a success when it did not.
+ *
+ * Only transport errors are retried: an HTTP status is an answer, not a
+ * failure to get one.
+ */
+async function withRetry(fn, attempts = 2, delayMs = 400) {
+  let last
+  for (let i = 0; i < attempts; i++) {
+    try {
+      return await fn()
+    } catch (e) {
+      last = e
+      // An HTTP status means the server answered; retrying would not change it.
+      if (/^HTTP \d+/.test(String(e?.message ?? ''))) throw e
+      if (i < attempts - 1) await new Promise((r) => setTimeout(r, delayMs))
+    }
+  }
+  throw last
+}
+
 export async function runJob(job) {
   const t0 = Date.now()
   const adapter = ADAPTERS[job.type]
   const base = { job: job.id, type: job.type, startedAt: new Date(t0).toISOString() }
   if (!adapter) return { ...base, ok: false, ms: 0, error: `unknown job type: ${job.type}` }
   try {
-    const out = await adapter(job)
+    const out = await withRetry(() => adapter(job))
     return { ...base, ...out, ok: out.ok !== false, ms: Date.now() - t0 }
   } catch (e) {
     return { ...base, ok: false, ms: Date.now() - t0, error: String(e?.message ?? e).slice(0, 400) }
